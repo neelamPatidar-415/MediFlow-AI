@@ -8,6 +8,14 @@ const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
+const cors = require("cors");
+
+app.use(
+    cors({
+        origin: true,
+        credentials: true,
+    })
+);
 
 app.use("/api/bookings", bookingRouter);
 

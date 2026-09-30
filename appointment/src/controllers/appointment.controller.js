@@ -1,4 +1,5 @@
 const appointmentModel = require('../models/appointment.model');
+const axios = require("axios");
 
 async function createAppointment(req, res) {
 

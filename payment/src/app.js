@@ -6,6 +6,14 @@ const Paymentrouter = require('./routers/payment.routes');
 
 app.use(express.json());
 app.use(cookieParser());
+const cors = require("cors");
+
+app.use(
+    cors({
+        origin: true, // not that secure but wanna keep it simple for now.
+        credentials: true,
+    })
+);
 
 app.use('/api/payments', Paymentrouter);
 

@@ -6,9 +6,10 @@ const agent = require("../agents/agents");
 function initializeSocketServer(httpServer) {
     const io = new Server(httpServer, {
         cors: {
-            origin: "*"
-        }
-    }); // Required for AWS ALB path routing
+            origin: "http://localhost:5173",
+            credentials: true,
+        },
+    });
 
     console.log("Socket server initialized");
 
@@ -21,18 +22,31 @@ function initializeSocketServer(httpServer) {
         }
 
         try {
-            socket.user = jwt.verify(token, process.env.JWT_SECRET);
+            socket.user = jwt.verify(
+                token,
+                process.env.JWT_SECRET
+            );
+
             socket.token = token;
+
             console.log("Middleware reached");
+
             next();
         } catch {
-            next(new Error("Authentication error: Invalid token"));
+            next(
+                new Error(
+                    "Authentication error: Invalid token"
+                )
+            );
         }
     });
 
     io.on("connection", (socket) => {
         console.log("User connected:", socket.id);
-        console.log("Authenticated user:", socket.user.email);
+        console.log(
+            "Authenticated user:",
+            socket.user.email
+        );
 
         socket.isBusy = false;
 
@@ -41,7 +55,8 @@ function initializeSocketServer(httpServer) {
 
             if (socket.isBusy) {
                 return socket.emit("agent-response", {
-                    error: "Please wait while MediFlow AI is processing your previous request.",
+                    error:
+                        "Please wait while MediFlow AI is processing your previous request.",
                 });
             }
 
@@ -70,7 +85,8 @@ function initializeSocketServer(httpServer) {
                     .reverse()
                     .find(
                         (msg) =>
-                            msg.constructor?.name === "AIMessage" &&
+                            msg.constructor?.name ===
+                                "AIMessage" &&
                             typeof msg.content === "string" &&
                             msg.content.trim().length > 0
                     );
@@ -81,7 +97,10 @@ function initializeSocketServer(httpServer) {
                         "Sorry, I couldn't generate a response.",
                 });
             } catch (err) {
-                console.error("MediFlow AI Error:", err);
+                console.error(
+                    "MediFlow AI Error:",
+                    err
+                );
 
                 socket.emit("agent-response", {
                     error:
@@ -93,7 +112,10 @@ function initializeSocketServer(httpServer) {
         });
 
         socket.on("disconnect", () => {
-            console.log("User disconnected:", socket.id);
+            console.log(
+                "User disconnected:",
+                socket.id
+            );
         });
     });
 }

@@ -1,0 +1,460 @@
+/* =========================
+   FLOATING AI BUTTON
+========================= */
+
+.ai-floating-button {
+    position: fixed;
+    right: 28px;
+    bottom: 28px;
+
+    width: 58px;
+    height: 58px;
+
+    border: none;
+    border-radius: 50%;
+
+    background: var(--primary);
+    color: white;
+
+    font-size: 26px;
+    font-weight: 600;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+
+    box-shadow: 0 8px 25px rgba(15, 118, 110, 0.3);
+
+    z-index: 9999;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.ai-floating-button:hover {
+    background: var(--primary-dark);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(15, 118, 110, 0.35);
+}
+
+
+/* =========================
+   ASSISTANT WINDOW
+========================= */
+
+.ai-assistant {
+    position: fixed;
+
+    right: 28px;
+    bottom: 28px;
+
+    width: 380px;
+    height: 540px;
+
+    background: var(--card);
+
+    border: 1px solid var(--border);
+    border-radius: 18px;
+
+    box-shadow:
+        0 20px 50px rgba(18, 48, 74, 0.18);
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+
+    z-index: 9999;
+
+    animation: aiOpen 0.2s ease;
+}
+
+@keyframes aiOpen {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.ai-header {
+    height: 70px;
+
+    padding: 0 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background: var(--primary);
+
+    color: white;
+
+    flex-shrink: 0;
+}
+
+.ai-header-info {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.ai-avatar {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.18);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 19px;
+}
+
+.ai-header h3 {
+    margin: 0;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.ai-header span {
+    display: block;
+
+    margin-top: 2px;
+
+    font-size: 11px;
+
+    opacity: 0.8;
+}
+
+.ai-close {
+    width: 34px;
+    height: 34px;
+
+    border: none;
+    background: transparent;
+
+    color: white;
+
+    font-size: 26px;
+    line-height: 1;
+
+    cursor: pointer;
+
+    border-radius: 8px;
+}
+
+.ai-close:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+
+/* =========================
+   MESSAGES
+========================= */
+
+.ai-messages {
+    flex: 1;
+
+    overflow-y: auto;
+
+    padding: 18px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+
+    background: var(--bg);
+}
+
+.ai-messages::-webkit-scrollbar {
+    width: 5px;
+}
+
+.ai-messages::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 10px;
+}
+
+
+/* =========================
+   WELCOME
+========================= */
+
+.ai-welcome {
+    margin: auto;
+
+    max-width: 280px;
+
+    text-align: center;
+
+    color: var(--text);
+}
+
+.ai-welcome-icon {
+    width: 48px;
+    height: 48px;
+
+    margin: 0 auto 14px;
+
+    border-radius: 50%;
+
+    background: var(--primary-light);
+    color: var(--primary);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 22px;
+}
+
+.ai-welcome h3 {
+    margin: 0 0 8px;
+
+    font-size: 18px;
+}
+
+.ai-welcome p {
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================
+   MESSAGE BUBBLES
+========================= */
+
+.ai-message {
+    max-width: 80%;
+
+    padding: 10px 13px;
+
+    border-radius: 13px;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+
+    white-space: pre-wrap;
+
+    word-break: break-word;
+}
+
+.ai-user-message {
+    align-self: flex-end;
+
+    background: var(--primary);
+
+    color: white;
+
+    border-bottom-right-radius: 4px;
+}
+
+.ai-bot-message {
+    align-self: flex-start;
+
+    background: var(--card);
+
+    color: var(--text);
+
+    border: 1px solid var(--border);
+
+    border-bottom-left-radius: 4px;
+}
+
+
+/* =========================
+   TYPING
+========================= */
+
+.ai-typing {
+    display: flex;
+
+    gap: 4px;
+
+    padding: 13px 15px;
+}
+
+.ai-typing span {
+    width: 6px;
+    height: 6px;
+
+    background: var(--muted);
+
+    border-radius: 50%;
+
+    animation: aiTyping 1.2s infinite;
+}
+
+.ai-typing span:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.ai-typing span:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes aiTyping {
+    0%,
+    60%,
+    100% {
+        opacity: 0.3;
+    }
+
+    30% {
+        opacity: 1;
+    }
+}
+
+
+/* =========================
+   ERROR
+========================= */
+
+.ai-error {
+    align-self: center;
+
+    color: var(--danger);
+
+    font-size: 11px;
+
+    text-align: center;
+}
+
+
+/* =========================
+   COMPOSER
+========================= */
+
+.ai-composer {
+    padding: 12px;
+
+    display: flex;
+    align-items: flex-end;
+
+    gap: 8px;
+
+    background: var(--card);
+
+    border-top: 1px solid var(--border);
+}
+
+.ai-composer textarea {
+    flex: 1;
+
+    min-height: 40px;
+    max-height: 100px;
+
+    resize: none;
+
+    border: 1px solid var(--border);
+
+    border-radius: 10px;
+
+    padding: 10px 11px;
+
+    font-family: inherit;
+    font-size: 13px;
+
+    color: var(--text);
+
+    background: var(--bg);
+
+    outline: none;
+}
+
+.ai-composer textarea:focus {
+    border-color: var(--primary);
+}
+
+.ai-composer textarea::placeholder {
+    color: var(--muted);
+}
+
+.ai-composer button {
+    width: 40px;
+    height: 40px;
+
+    flex-shrink: 0;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: var(--primary);
+
+    color: white;
+
+    font-size: 20px;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: background 0.2s ease;
+}
+
+.ai-composer button:hover:not(:disabled) {
+    background: var(--primary-dark);
+}
+
+.ai-composer button:disabled {
+    opacity: 0.45;
+    cursor: default;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+
+    .ai-floating-button {
+        right: 16px;
+        bottom: 18px;
+
+        width: 52px;
+        height: 52px;
+
+        font-size: 23px;
+    }
+
+    .ai-assistant {
+        right: 12px;
+        left: 12px;
+
+        bottom: 12px;
+
+        width: auto;
+        height: min(560px, calc(100dvh - 24px));
+
+        border-radius: 16px;
+    }
+}

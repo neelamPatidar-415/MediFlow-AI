@@ -37,15 +37,16 @@ const searchDoctorsTool = tool(
 /*                           Book Appointment Tool                            */
 
 const bookAppointmentTool = tool(
-    async ({ doctorId, date, slot, token }) => {
+    async ({ doctorId, date, slot, mode, price, token }) => {
         try {
-
             const response = await axios.post(
                 "http://localhost:3002/api/appointments",
                 {
-                    doctorId,
+                    doctor: doctorId,
                     date,
                     slot,
+                    mode,
+                    price
                 },
                 {
                     headers: {
@@ -57,19 +58,29 @@ const bookAppointmentTool = tool(
             return JSON.stringify(response.data);
 
         } catch (err) {
+            console.log("BOOKING ERROR:", err.response?.data || err.message);
+
             return `Unable to book appointment: ${
-                err.response?.data?.message || err.message
+                err.response?.data?.message ||
+                JSON.stringify(err.response?.data) ||
+                err.message
             }`;
         }
     },
     {
         name: "book_appointment",
         description:
-            "Book an appointment with a doctor using doctor ID, appointment date and available time slot.",
+            "Book an appointment using doctor ID, date, available slot, appointment mode, and doctor's consultation price.",
+
         schema: z.object({
             doctorId: z.string().describe("Doctor ID"),
-            date: z.string().describe("Appointment date (YYYY-MM-DD)"),
-            slot: z.string().describe("Available time slot"),
+            date: z.string().describe("Appointment date YYYY-MM-DD"),
+            slot: z.string().describe("Available appointment time slot"),
+            mode: z.enum(["ONLINE", "OFFLINE"]),
+            price: z.object({
+                amount: z.number(),
+                currency: z.enum(["INR", "USD"])
+            })
         }),
     }
 );

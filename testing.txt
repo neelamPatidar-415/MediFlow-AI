@@ -1,0 +1,11 @@
+admin login
+{
+    "email": "apollo@gmail.com",
+    "password": "Password@123"
+} 
+
+user login 
+{
+    "email": "neelam@gmail.com",
+    "password": "Password@123"
+}
