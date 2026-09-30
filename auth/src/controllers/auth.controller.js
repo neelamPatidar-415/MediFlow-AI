@@ -1,7 +1,7 @@
 const userModel = require("../models/user.model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const redis = require("../db/redis");
+// const redis = require("../db/redis");
 const mongoose = require('mongoose');
 
 //for RabbitMQ of notification service
@@ -168,25 +168,28 @@ async function getCurrentUser(req, res) {
 async function logoutUser(req, res) {
     const token = req.cookies.token;
 
-    if (token) {
-        try {
-            if (redis && typeof redis.set === "function") {
-                await redis.set(
-                    `blacklist:${token}`,
-                    "true",
-                    "EX",
-                    24 * 60 * 60
-                );
-            }
-        } catch (err) {
-            console.error("Redis error while blacklisting token", err);
-        }
-    }
+    // if (token) {
+    //     try {
+    //         if (redis && typeof redis.set === "function") {
+    //             await redis.set(
+    //                 `blacklist:${token}`,
+    //                 "true",
+    //                 "EX",
+    //                 24 * 60 * 60
+    //             );
+    //         }
+    //     } catch (err) {
+    //         console.error("Redis error while blacklisting token", err);
+    //     }
+    // }
 
-    res.clearCookie("token", {
+    //removing redis blacklisting now , to avoid token expiry while deploying
+    if(token){
+        res.clearCookie("token", {
         httpOnly: true,
         secure: false,
-    });
+        });
+    }
 
     return res.status(200).json({
         message: "Logged out successfully",
