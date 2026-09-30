@@ -119,7 +119,7 @@ function HospitalAnalytics() {
 
             <div className="hospital-page-header">
                 <div>
-                    <h1>Hospital Analytics</h1>
+                     <h1>{stats?.hospitalName || "Hospital"} Analytics</h1>
                     <p>
                         Overview of your hospital's activity and performance.
                     </p>

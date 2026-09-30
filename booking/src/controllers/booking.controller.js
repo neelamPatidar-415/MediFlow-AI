@@ -35,7 +35,9 @@ async function createBooking(req, res) {
             }
         );
 
-        const doctor = doctorResponse.data.doctor;
+        // console.log("DOCTOR RESPONSE:", doctorResponse.data);
+
+        const doctor = doctorResponse.data.data;
 
         const booking = await bookingModel.create({
 
@@ -61,7 +63,7 @@ async function createBooking(req, res) {
         });
 
         await publishToQueue(
-            "BOOKING_NOTIFICATION.BOOKING_CONFIRMED",
+            "BOOKING_CONFIRMED",
             booking
         );
 
@@ -182,6 +184,11 @@ async function cancelBooking(req, res) {
 
         await booking.save();
 
+        await publishToQueue(
+            "BOOKING_CANCELLED",
+            booking
+        );
+
         return res.status(200).json({
             message: "Booking cancelled successfully",
             booking,
@@ -227,10 +234,55 @@ async function getHospitalBookings(req, res) {
 
 }
 
+async function completeBooking(req, res) {
+    try {
+        const { id } = req.params;
+
+        const booking = await bookingModel.findOne({
+            _id: id,
+            hospitalName: req.user.hospitalName,
+        });
+
+        if (!booking) {
+            return res.status(404).json({
+                message: "Booking not found",
+            });
+        }
+
+        if (booking.status !== "CONFIRMED") {
+            return res.status(400).json({
+                message: "Only confirmed bookings can be completed",
+            });
+        }
+
+        booking.status = "COMPLETED";
+        await booking.save();
+
+        await publishToQueue(
+            "BOOKING_COMPLETED",
+            booking
+        );
+
+        return res.status(200).json({
+            message: "Booking marked as completed",
+            booking,
+        });
+
+    } catch (err) {
+        console.error(err);
+
+        return res.status(500).json({
+            message: "Internal Server Error",
+            error: err.message,
+        });
+    }
+}
+
 module.exports = {
     createBooking,
     getBookingById,
     getMyBookings,
     cancelBooking,
     getHospitalBookings,
+    completeBooking,
 };

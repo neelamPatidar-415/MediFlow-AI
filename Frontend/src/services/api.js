@@ -1,3 +1,4 @@
+// const DOCTORS_API_URL = "http://localhost:3001/api/doctors";
 const DOCTORS_API_URL = import.meta.env.VITE_DOCTORS_API_URL;
 const AUTH_API_URL = "http://localhost:3000/api/auth";
 const APPOINTMENTS_API_URL = "http://localhost:3002/api/appointments";
@@ -408,13 +409,18 @@ export async function getHospitalDoctors() {
         credentials: "include",
     });
 
-    const result = await response.json();
+    console.log("DOCTORS_API_URL =", DOCTORS_API_URL);
+
+    const text = await response.text();
+
+    console.log("DOCTOR RESPONSE STATUS:", response.status);
+    console.log("DOCTOR RESPONSE:", text);
 
     if (!response.ok) {
-        throw new Error(result.message || result.error || "Failed to fetch doctors");
+        throw new Error("Failed to fetch doctors");
     }
 
-    return result;
+    return JSON.parse(text);
 }
 
 export async function updateDoctor(id, data) {
@@ -572,4 +578,106 @@ export async function getDashboardRevenue() {
 
     return result;
 }
+
+export async function markBookingCompleted(bookingId) {
+    const response = await fetch(
+        `${BOOKING_API_URL}/hospital/${bookingId}/complete`,
+        {
+            method: "PATCH",
+            credentials: "include",
+        }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            result.message ||
+            result.error ||
+            "Failed to mark booking as completed"
+        );
+    }
+
+    return result;
+}
+
+
+/* =========================
+ADVERSE REACTIONS
+========================= */
+
+const ADVERSE_REACTION_API_URL =
+    "http://localhost:3003/api/adverse-reactions";
+
+export async function submitAdverseReaction(data) {
+    const response = await fetch(
+        ADVERSE_REACTION_API_URL,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify(data),
+        }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            result.message ||
+            result.error ||
+            "Failed to submit adverse reaction report"
+        );
+    }
+
+    return result;
+}
+
+export async function requestBookingFollowUp(bookingId) {
+    const response = await fetch(
+        `${ADVERSE_REACTION_API_URL}/${bookingId}/followup`,
+        {
+            method: "PATCH",
+            credentials: "include",
+        }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            result.message ||
+            result.error ||
+            "Failed to request doctor follow-up"
+        );
+    }
+
+    return result;
+}
+
+
+export async function getHospitalAdverseReactions() {
+    const response = await fetch(
+        `${ADVERSE_REACTION_API_URL}/hospital`,
+        {
+            method: "GET",
+            credentials: "include",
+        }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            result.message ||
+            result.error ||
+            "Failed to fetch adverse reaction reports"
+        );
+    }
+
+    return result;
+}
+
 

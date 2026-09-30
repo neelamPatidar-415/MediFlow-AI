@@ -7,8 +7,8 @@ async function connectBroker(){
     if(connection) return connection;
 
     try {
-        console.log("Connecting to RabbitMQ with it's uri ");
-        console.log(process.env.RABBITMQ_URL);
+        // console.log("Connecting to RabbitMQ with it's uri ");
+        // console.log(process.env.RABBITMQ_URL);
         connection = await amqplib.connect(process.env.RABBITMQ_URL);
         channel = await connection.createChannel();
         console.log("Connected to RabbitMQ");

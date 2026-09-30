@@ -3,6 +3,7 @@ const cookieParser = require("cookie-parser");
 require("dotenv").config();
 
 const bookingRouter = require("./routes/booking.routes");
+const adverseReactionRoutes = require("./routes/adverseReaction.routes");
 
 const app = express();
 
@@ -18,6 +19,12 @@ app.use(
 );
 
 app.use("/api/bookings", bookingRouter);
+
+
+app.use(
+    "/api/adverse-reactions",
+    adverseReactionRoutes
+);
 
 app.get("/", (req, res) => {
     res.status(200).json({

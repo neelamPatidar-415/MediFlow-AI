@@ -69,6 +69,18 @@ module.exports = function () {
         }
     });
 
+    subscribeToQueue("BOOKING_COMPLETED", async (booking) => {
+        try {
+            await bookingModel.findByIdAndUpdate(
+                booking._id,
+                { status: "COMPLETED" },
+                { new: true }
+            );
+        } catch (err) {
+            console.error("BOOKING_COMPLETED:", err.message);
+        }
+    });
+
     //  PAYMENT 
 
     subscribeToQueue("PAYMENT_COMPLETED", async (payment) => {

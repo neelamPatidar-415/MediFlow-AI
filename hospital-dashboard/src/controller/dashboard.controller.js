@@ -8,6 +8,8 @@ async function getDashboardStats(req, res) {
 
         const hospitalName = req.user.hospitalName;
 
+        // console.log("Hospital Name:", hospitalName);
+
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
@@ -55,9 +57,19 @@ async function getDashboardStats(req, res) {
             0
         );
 
+        // console.log("Dashboard Stats:", {
+        //     totalDoctors,
+        //     totalBookings,
+        //     todayBookings,
+        //     completedBookings,
+        //     cancelledBookings,
+        //     totalRevenue,
+        // });
+
         return res.status(200).json({
 
             totalDoctors,
+            hospitalName,
             totalBookings,
             todayBookings,
             completedBookings,

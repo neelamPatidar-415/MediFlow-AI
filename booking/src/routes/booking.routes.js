@@ -40,4 +40,11 @@ router.get(
     bookingController.getHospitalBookings
 );
 
+router.patch(
+    "/hospital/:id/complete",
+    authMiddleware.createAuthMiddleware(["hospital_admin", "admin"]),
+    validator.bookingIdValidation,
+    bookingController.completeBooking
+);
+
 module.exports = router;

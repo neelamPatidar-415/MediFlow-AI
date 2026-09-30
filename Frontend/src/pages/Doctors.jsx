@@ -14,19 +14,36 @@ function Doctors() {
         mode: "",
     });
 
-    async function fetchDoctors() {
-        try {
-            setLoading(true);
-            setError("");
 
-            const result = await getDoctors(filters);
-            setDoctors(result.data || []);
-        } catch (err) {
-            setError("Unable to load doctors.");
-        } finally {
-            setLoading(false);
-        }
+    async function fetchDoctors() {
+    try {
+        setLoading(true);
+        setError("");
+
+        const result = await getDoctors(filters);
+
+        console.log("DOCTORS RESULT:", result);
+
+        const doctorList =
+            Array.isArray(result)
+                ? result
+                : Array.isArray(result.data)
+                    ? result.data
+                    : Array.isArray(result.doctors)
+                        ? result.doctors
+                        : Array.isArray(result.data?.doctors)
+                            ? result.data.doctors
+                            : [];
+
+        setDoctors(doctorList);
+
+    } catch (err) {
+        console.error("DOCTORS ERROR:", err);
+        setError(err.message || "Unable to load doctors.");
+    } finally {
+        setLoading(false);
     }
+}
 
     useEffect(() => {
         fetchDoctors();
