@@ -13,55 +13,51 @@ import MyBookings from "./pages/MyBookings";
 import Footer from "./components/Footer";
 import AIAssistant from "./components/AIAssistant";
 
+//hospital admin pages
+import CreateDoctor from "./pages/hospital/CreateDoctor";
+import ManageDoctors from "./pages/hospital/ManageDoctors";
+import HospitalAnalytics from "./pages/hospital/HospitalAnalytics";
+import HospitalAppointments from "./pages/hospital/HospitalAppointments";
+import HospitalBookings from "./pages/hospital/HospitalBookings";
+
 function App() {
     return (
-        <BrowserRouter>
+      <BrowserRouter>
+        <Navbar />
 
-            <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
+          <Route path="/doctors" element={<Doctors />} />
+          <Route path="/doctors/:id" element={<DoctorDetails />} />
 
-                <Route path="/doctors" element={<Doctors />} />
-                <Route
-                    path="/doctors/:id"
-                    element={<DoctorDetails />}
-                />
+          <Route path="/appointments" element={<Appointments />} />
 
-                <Route
-                    path="/appointments"
-                    element={<Appointments />}
-                />
+          <Route path="/bookings" element={<MyBookings />} />
 
-                <Route
-                    path="/bookings"
-                    element={<MyBookings />}
-                />
+          <Route path="/my-appointments" element={<MyAppointments />} />
 
-                <Route
-                    path="/my-appointments"
-                    element={<MyAppointments />}
-                />
+          <Route path="/profile" element={<Profile />} />
 
-                <Route
-                    path="/profile"
-                    element={<Profile />}
-                />
+          <Route path="/hospital/doctors/create" element={<CreateDoctor />} />
+          <Route path="/hospital/doctors" element={<ManageDoctors />} />
+          <Route path="/hospital/analytics" element={<HospitalAnalytics />} />
+          <Route
+            path="/hospital/appointments"
+            element={<HospitalAppointments />}
+          />
+          <Route path="/hospital/bookings" element={<HospitalBookings />} />
 
-                <Route
-                    path="*"
-                    element={<Navigate to="/" replace />}
-                />
-            </Routes>
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
 
-            <Footer />
+        <Footer />
 
-            {/* Available globally */}
-            <AIAssistant />
-
-        </BrowserRouter>
+        {/* Available globally */}
+        <AIAssistant />
+      </BrowserRouter>
     );
 }
 

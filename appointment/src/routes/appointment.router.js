@@ -49,4 +49,10 @@ router.delete(
     appointmentController.clearAppointments
 );
 
+router.get(
+    "/hospital/all",
+    authMiddleware.createAuthMiddleware(["hospital_admin", "admin"]),
+    appointmentController.getHospitalAppointments
+);
+
 module.exports = router;

@@ -207,6 +207,62 @@ async function clearAppointments(req, res) {
     }
 }
 
+async function getHospitalAppointments(req, res) {
+    try {
+        const token =
+            req.cookies?.token ||
+            req.header("Authorization")?.split(" ")[1];
+
+        // Get doctors belonging to this hospital
+        const doctorResponse = await axios.get(
+            "http://localhost:3001/api/doctors/hospital",
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            }
+        );
+
+        const doctors = doctorResponse.data.data || [];
+
+        const doctorIds = doctors.map((doctor) => doctor._id);
+
+        if (doctorIds.length === 0) {
+            return res.status(200).json({
+                data: [],
+            });
+        }
+
+        const appointments = await appointmentModel.find({
+            doctor: { $in: doctorIds },
+        }).sort({ date: 1 });
+
+        const doctorMap = {};
+
+        doctors.forEach((doctor) => {
+            doctorMap[doctor._id.toString()] = doctor;
+        });
+
+        const result = appointments.map((appointment) => ({
+            ...appointment.toObject(),
+            doctor: doctorMap[appointment.doctor.toString()] || {
+                _id: appointment.doctor,
+            },
+        }));
+
+        return res.status(200).json({
+            data: result,
+        });
+
+    } catch (err) {
+        console.error("GET HOSPITAL APPOINTMENTS ERROR:", err);
+
+        return res.status(500).json({
+            error: "Internal Server Error",
+        });
+    }
+}
+
 module.exports = {
     createAppointment,
     updateAppointment,
@@ -214,4 +270,5 @@ module.exports = {
     getAppointmentById,
     deleteAppointment,
     clearAppointments,
+    getHospitalAppointments
 };

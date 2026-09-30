@@ -376,3 +376,200 @@ export async function getBookingById(id) {
     return result;
 }
 
+/* ====================
+HOSPITAL DOCTORS 
+======================*/
+
+export async function createDoctor(data) {
+    const response = await fetch(DOCTORS_API_URL, {
+        method: "POST",
+        credentials: "include",
+        body: data,
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        const validationMessage = result.errors?.[0]?.msg;
+
+        throw new Error(
+            result.message ||
+            result.error ||
+            validationMessage ||
+            "Failed to create doctor"
+        );
+    }
+
+    return result;
+}
+
+export async function getHospitalDoctors() {
+    const response = await fetch(`${DOCTORS_API_URL}/hospital`, {
+        credentials: "include",
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(result.message || result.error || "Failed to fetch doctors");
+    }
+
+    return result;
+}
+
+export async function updateDoctor(id, data) {
+    const response = await fetch(`${DOCTORS_API_URL}/${id}`, {
+        method: "PATCH",
+        credentials: "include",
+        body: data,
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(result.message || result.error || "Failed to update doctor");
+    }
+
+    return result;
+}
+
+export async function deleteDoctor(id) {
+    const response = await fetch(`${DOCTORS_API_URL}/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(result.message || result.error || "Failed to delete doctor");
+    }
+
+    return result;
+}
+
+/* HOSPITAL APPOINTMENTS */
+
+export async function getHospitalAppointments() {
+    const response = await fetch(
+        `${APPOINTMENTS_API_URL}/hospital/all`,
+        {
+            method: "GET",
+            credentials: "include",
+        }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            result.message ||
+            result.error ||
+            "Failed to fetch hospital appointments"
+        );
+    }
+
+    return result;
+}
+
+
+/* HOSPITAL BOOKINGS */
+
+export async function getHospitalBookings() {
+    const response = await fetch(
+        `${BOOKING_API_URL}/hospital/all`,
+        {
+            method: "GET",
+            credentials: "include",
+        }
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            result.message ||
+            result.error ||
+            "Failed to fetch hospital bookings"
+        );
+    }
+
+    return result;
+}
+
+/* HOSPITAL DASHBOARD */
+
+const DASHBOARD_API_URL = "http://localhost:3007/api/dashboard";
+
+export async function getDashboardStats() {
+    const response = await fetch(`${DASHBOARD_API_URL}/stats`, {
+        credentials: "include",
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            result.message ||
+            result.error ||
+            "Failed to fetch dashboard statistics"
+        );
+    }
+
+    return result;
+}
+
+export async function getDashboardBookings() {
+    const response = await fetch(`${DASHBOARD_API_URL}/bookings`, {
+        credentials: "include",
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            result.message ||
+            result.error ||
+            "Failed to fetch dashboard bookings"
+        );
+    }
+
+    return result;
+}
+
+export async function getDashboardDoctors() {
+    const response = await fetch(`${DASHBOARD_API_URL}/doctors`, {
+        credentials: "include",
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            result.message ||
+            result.error ||
+            "Failed to fetch dashboard doctors"
+        );
+    }
+
+    return result;
+}
+
+export async function getDashboardRevenue() {
+    const response = await fetch(`${DASHBOARD_API_URL}/revenue`, {
+        credentials: "include",
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        throw new Error(
+            result.message ||
+            result.error ||
+            "Failed to fetch revenue"
+        );
+    }
+
+    return result;
+}
+

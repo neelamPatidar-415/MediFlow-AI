@@ -1,10 +1,26 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { getCurrentUser } from "../services/api";
 
 function Home() {
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        getCurrentUser()
+            .then((result) => {
+                setUser(result.user || result);
+            })
+            .catch(() => {
+                setUser(null);
+            });
+    }, []);
+
+    const isHospitalAdmin =
+        user?.role === "hospital_admin";
+
     return (
         <div className="home-page">
 
-            {/* Hero */}
             <section className="home-hero">
 
                 <div className="home-hero-content">
@@ -14,30 +30,50 @@ function Home() {
                     </span>
 
                     <h1>
-                        Find the right care,
+                        {isHospitalAdmin
+                            ? "Manage your hospital,"
+                            : "Find the right care,"}
                         <br />
-                        <span>when you need it.</span>
+                        <span>
+                            {isHospitalAdmin
+                                ? "all in one place."
+                                : "when you need it."}
+                        </span>
                     </h1>
 
                     <p>
-                        Discover doctors, check availability, and
-                        book appointments with ease.
+                        {isHospitalAdmin
+                            ? "Manage doctors, monitor appointments and get meaningful insights into your hospital operations."
+                            : "Discover doctors, check availability, and book appointments with ease."}
                     </p>
 
                     <div className="home-actions">
-                        <Link
-                            to="/doctors"
-                            className="home-primary-button"
-                        >
-                            Find a Doctor →
-                        </Link>
 
-                        <Link
-                            to="/appointments"
-                            className="home-secondary-button"
-                        >
-                            My Appointments
-                        </Link>
+                        {isHospitalAdmin ? (
+                            <Link
+                                to="/hospital"
+                                className="home-primary-button"
+                            >
+                                Hospital Dashboard →
+                            </Link>
+                        ) : (
+                            <>
+                                <Link
+                                    to="/doctors"
+                                    className="home-primary-button"
+                                >
+                                    Find a Doctor →
+                                </Link>
+
+                                <Link
+                                    to="/appointments"
+                                    className="home-secondary-button"
+                                >
+                                    My Appointments
+                                </Link>
+                            </>
+                        )}
+
                     </div>
 
                 </div>
@@ -54,18 +90,21 @@ function Home() {
                         </div>
 
                         <div className="health-icon">
-                            ♥
+                            {isHospitalAdmin ? "⌂" : "♥"}
                         </div>
 
                         <h3>
-                            Your care,
+                            {isHospitalAdmin
+                                ? "Your hospital,"
+                                : "Your care,"}
                             <br />
                             all in one place.
                         </h3>
 
                         <p>
-                            Find doctors and manage
-                            your appointments easily.
+                            {isHospitalAdmin
+                                ? "Doctors, appointments and hospital insights."
+                                : "Find doctors and manage your appointments easily."}
                         </p>
 
                     </div>
@@ -74,17 +113,24 @@ function Home() {
 
             </section>
 
-            {/* Features */}
             <section className="home-features">
 
                 <div className="home-feature">
-                    <div className="feature-icon">⌕</div>
+                    <div className="feature-icon">
+                        {isHospitalAdmin ? "✚" : "⌕"}
+                    </div>
 
                     <div>
-                        <h3>Find Doctors</h3>
+                        <h3>
+                            {isHospitalAdmin
+                                ? "Manage Doctors"
+                                : "Find Doctors"}
+                        </h3>
+
                         <p>
-                            Search doctors by specialization,
-                            city and availability.
+                            {isHospitalAdmin
+                                ? "Add and manage doctors working in your hospital."
+                                : "Search doctors by specialization, city and availability."}
                         </p>
                     </div>
                 </div>
@@ -93,22 +139,36 @@ function Home() {
                     <div className="feature-icon">✓</div>
 
                     <div>
-                        <h3>Easy Booking</h3>
+                        <h3>
+                            {isHospitalAdmin
+                                ? "Appointments"
+                                : "Easy Booking"}
+                        </h3>
+
                         <p>
-                            Choose an available slot and
-                            confirm your appointment.
+                            {isHospitalAdmin
+                                ? "Monitor appointments and booking activity."
+                                : "Choose an available slot and confirm your appointment."}
                         </p>
                     </div>
                 </div>
 
                 <div className="home-feature">
-                    <div className="feature-icon">♡</div>
+                    <div className="feature-icon">
+                        {isHospitalAdmin ? "◈" : "♡"}
+                    </div>
 
                     <div>
-                        <h3>Stay Organized</h3>
+                        <h3>
+                            {isHospitalAdmin
+                                ? "Hospital Insights"
+                                : "Stay Organized"}
+                        </h3>
+
                         <p>
-                            Keep your appointments and
-                            healthcare journey together.
+                            {isHospitalAdmin
+                                ? "View useful analytics about your hospital."
+                                : "Keep your appointments and healthcare journey together."}
                         </p>
                     </div>
                 </div>

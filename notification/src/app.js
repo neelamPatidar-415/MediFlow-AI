@@ -1,6 +1,15 @@
 const express = require('express');
 const app = express();
 
+const cors = require("cors");
+
+app.use(
+    cors({
+        origin: true,
+        credentials: true,
+    })
+);
+
 const { connectBroker } = require('./broker/broker');
 const setListener = require('./broker/listener');
 

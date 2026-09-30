@@ -1,5 +1,6 @@
 const Doctor = require('../models/doctors.model');
 const { uploadImage } = require('../services/Imagekit.service');
+const mongoose = require('mongoose');
 
 const { publishToQueue } = require('../broker/broker');
 
@@ -166,77 +167,80 @@ async function getDoctorById(req, res) {
 }
 
 async function updateDoctor(req, res) {
+    try {
+        const { id } = req.params;
 
-    const { id } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({
-            error: "Invalid doctor id",
-        });
-    }
-
-    const doctor = await Doctor.findOne({
-        _id: id,
-        hospitalId: req.user.id,
-    });
-
-    // Only the hospital that created the doctor can update it
-
-    if (!doctor) {
-        return res.status(404).json({
-            error: "Doctor not found",
-        });
-    }
-
-    const allowedUpdates = [
-        "name",
-        "specialization",
-        "qualification",
-        "experience",
-        "price",
-        "hospitalName",
-        "city",
-        "mode",
-        "availableDays",
-        "availableSlots",
-        "languages",
-        "about",
-        "rating",
-        "totalReviews",
-        "isAvailable",
-    ];
-
-    for (const key of Object.keys(req.body)) {
-
-        if (!allowedUpdates.includes(key)) continue;
-
-        if (key === "price" && typeof req.body.price === "object") {
-
-            if (req.body.price.amount !== undefined) {
-                doctor.price.amount = req.body.price.amount;
-            }
-
-            if (req.body.price.currency !== undefined) {
-                doctor.price.currency = req.body.price.currency;
-            }
-
-        } else {
-            doctor[key] = req.body[key];
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({
+                error: "Invalid doctor id",
+            });
         }
+
+        const doctor = await Doctor.findOne({
+            _id: id,
+            hospitalId: req.user.id,
+        });
+
+        if (!doctor) {
+            return res.status(404).json({
+                error: "Doctor not found",
+            });
+        }
+
+        const allowedUpdates = [
+            "name",
+            "specialization",
+            "qualification",
+            "experience",
+            "price",
+            "hospitalName",
+            "city",
+            "mode",
+            "availableDays",
+            "availableSlots",
+            "languages",
+            "about",
+            "rating",
+            "totalReviews",
+            "isAvailable",
+        ];
+
+        for (const key of Object.keys(req.body)) {
+            if (!allowedUpdates.includes(key)) continue;
+
+            if (key === "price" && typeof req.body.price === "object") {
+                if (req.body.price.amount !== undefined) {
+                    doctor.price.amount = req.body.price.amount;
+                }
+
+                if (req.body.price.currency !== undefined) {
+                    doctor.price.currency = req.body.price.currency;
+                }
+            } else {
+                doctor[key] = req.body[key];
+            }
+        }
+
+        if (req.file) {
+            doctor.profileImage = await uploadImage(req.file.buffer);
+        }
+
+        await doctor.save();
+
+        await publishToQueue("DOCTOR_UPDATED", doctor);
+
+        return res.status(200).json({
+            message: "Doctor updated successfully",
+            data: doctor,
+        });
+
+    } catch (err) {
+        console.error("UPDATE DOCTOR ERROR:", err);
+
+        return res.status(500).json({
+            error: err.message || "Internal Server Error",
+        });
     }
-
-    if (req.file) {
-        doctor.profileImage = await uploadImage(req.file.buffer);
-    }
-
-    await doctor.save();
-
-    await publishToQueue("DOCTOR_UPDATED", doctor);
-
-    return res.status(200).json({
-        message: "Doctor updated successfully",
-        data: doctor,
-    });
 }
 
 async function deleteDoctor(req, res) {

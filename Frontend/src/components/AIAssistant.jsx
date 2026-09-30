@@ -16,7 +16,8 @@ function AIAssistant() {
 
     useEffect(() => {
         const socket = io(AI_SOCKET_URL, {
-            withCredentials: true,
+          autoConnect: false,
+          withCredentials: true,
         });
 
         socketRef.current = socket;
@@ -69,6 +70,15 @@ function AIAssistant() {
         });
     }, [messages, isSending]);
 
+    function openAssistant() {
+      setOpen(true);
+
+      if (!socketRef.current?.connected) {
+        setSocketError("");
+        socketRef.current?.connect();
+      }
+    }
+
     function sendMessage() {
         const trimmed = input.trim();
 
@@ -102,117 +112,104 @@ function AIAssistant() {
     }
 
     return (
-        <>
-            {/* Floating AI button */}
-            {!open && (
-                <button
-                    className="ai-floating-button"
-                    onClick={() => setOpen(true)}
-                    aria-label="Open AI Assistant"
-                >
-                    ✦
-                </button>
-            )}
+      <>
+        {/* Floating AI button */}
+        {!open && (
+          <button
+            className="ai-floating-button"
+            onClick={openAssistant}
+            aria-label="Open AI Assistant"
+          >
+            ✦
+          </button>
+        )}
 
-            {/* AI Assistant */}
-            {open && (
-                <div className="ai-assistant">
-                    <div className="ai-header">
-                        <div className="ai-header-info">
-                            <div className="ai-avatar">
-                                ✦
-                            </div>
+        {/* AI Assistant */}
+        {open && (
+          <div className="ai-assistant">
+            <div className="ai-header">
+              <div className="ai-header-info">
+                <div className="ai-avatar">✦</div>
 
-                            <div>
-                                <h3>PulsePilot AI</h3>
-                                <span>
-                                    Your healthcare assistant
-                                </span>
-                            </div>
-                        </div>
-
-                        <button
-                            className="ai-close"
-                            onClick={() => setOpen(false)}
-                            aria-label="Close AI Assistant"
-                        >
-                            ×
-                        </button>
-                    </div>
-
-                    <div className="ai-messages">
-
-                        {messages.length === 0 && (
-                            <div className="ai-welcome">
-                                <div className="ai-welcome-icon">
-                                    ✦
-                                </div>
-
-                                <h3>Hi! I'm PulsePilot AI</h3>
-
-                                <p>
-                                    I can help you find doctors,
-                                    compare options and manage
-                                    your appointments.
-                                </p>
-                            </div>
-                        )}
-
-                        {messages.map((message, index) => (
-                            <div
-                                key={index}
-                                className={`ai-message ${
-                                    message.type === "user"
-                                        ? "ai-user-message"
-                                        : "ai-bot-message"
-                                }`}
-                            >
-                                {message.content}
-                            </div>
-                        ))}
-
-                        {isSending && (
-                            <div className="ai-message ai-bot-message ai-typing">
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                            </div>
-                        )}
-
-                        {socketError && (
-                            <div className="ai-error">
-                                {socketError}
-                            </div>
-                        )}
-
-                        <div ref={messagesEndRef} />
-                    </div>
-
-                    <div className="ai-composer">
-                        <textarea
-                            value={input}
-                            onChange={(e) =>
-                                setInput(e.target.value)
-                            }
-                            onKeyDown={handleKeyDown}
-                            placeholder="Ask PulsePilot AI..."
-                            rows={1}
-                            disabled={isSending}
-                        />
-
-                        <button
-                            onClick={sendMessage}
-                            disabled={
-                                !input.trim() || isSending
-                            }
-                            aria-label="Send message"
-                        >
-                            →
-                        </button>
-                    </div>
+                <div>
+                  <h3>PulsePilot AI</h3>
+                  <span>Your healthcare assistant</span>
                 </div>
-            )}
-        </>
+              </div>
+
+              <button
+                className="ai-close"
+                onClick={() => {
+                  setOpen(false);
+                  socketRef.current?.disconnect();
+                }}
+                aria-label="Close AI Assistant"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="ai-messages">
+              {messages.length === 0 && (
+                <div className="ai-welcome">
+                  <div className="ai-welcome-icon">✦</div>
+
+                  <h3>Hi! I'm PulsePilot AI</h3>
+
+                  <p>
+                    I can help you find doctors, compare options and manage your
+                    appointments.
+                  </p>
+                </div>
+              )}
+
+              {messages.map((message, index) => (
+                <div
+                  key={index}
+                  className={`ai-message ${
+                    message.type === "user"
+                      ? "ai-user-message"
+                      : "ai-bot-message"
+                  }`}
+                >
+                  {message.content}
+                </div>
+              ))}
+
+              {isSending && (
+                <div className="ai-message ai-bot-message ai-typing">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              )}
+
+              {socketError && <div className="ai-error">{socketError}</div>}
+
+              <div ref={messagesEndRef} />
+            </div>
+
+            <div className="ai-composer">
+              <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Ask PulsePilot AI..."
+                rows={1}
+                disabled={isSending}
+              />
+
+              <button
+                onClick={sendMessage}
+                disabled={!input.trim() || isSending}
+                aria-label="Send message"
+              >
+                →
+              </button>
+            </div>
+          </div>
+        )}
+      </>
     );
 }
 

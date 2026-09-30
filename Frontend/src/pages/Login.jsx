@@ -27,13 +27,17 @@ function Login() {
         setLoading(true);
 
         try {
-            await loginUser(form);
+          const data = await loginUser(form);
 
+          if (data.user?.role === "hospital_admin") {
+            navigate("/hospital");
+          } else {
             navigate("/");
+          }
         } catch (err) {
-            setError(err.message);
+          setError(err.message);
         } finally {
-            setLoading(false);
+          setLoading(false);
         }
     }
 

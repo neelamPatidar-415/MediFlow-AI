@@ -14,25 +14,25 @@ function Navbar() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     useEffect(() => {
-    async function checkUser() {
-        try {
-            const result = await getCurrentUser();
-            setUser(result.user);
-        } catch {
-            setUser(null);
-        } finally {
-            setLoading(false);
+        async function checkUser() {
+            try {
+                const result = await getCurrentUser();
+                setUser(result.user);
+            } catch {
+                setUser(null);
+            } finally {
+                setLoading(false);
+            }
         }
-    }
 
-    checkUser();
+        checkUser();
 
-    window.addEventListener("auth-change", checkUser);
+        window.addEventListener("auth-change", checkUser);
 
-    return () => {
-        window.removeEventListener("auth-change", checkUser);
-    };
-}, []);
+        return () => {
+            window.removeEventListener("auth-change", checkUser);
+        };
+    }, []);
 
     async function handleLogout() {
         try {
@@ -51,139 +51,279 @@ function Navbar() {
         setMobileMenuOpen(false);
     }
 
+    const isHospitalAdmin = user?.role === "hospital_admin";
+
     return (
-      <nav className="navbar">
-        <div className="navbar-inner">
-          {/* LOGO */}
-          <Link to="/" className="navbar-brand" onClick={closeMobileMenu}>
-            <img src={logo} alt="PulsePilot" />
-            <span>PulsePilot</span>
-          </Link>
+        <nav className="navbar">
+            <div className="navbar-inner">
 
-          {/* DESKTOP NAVIGATION */}
-          <div className="navbar-links">
-            <Link to="/">Home</Link>
-
-            <Link to="/doctors">Find Doctors</Link>
-
-            {user && <Link to="/my-appointments">My Appointments</Link>}
-            {user && <Link to="/bookings">My Bookings</Link>}
-
-          </div>
-
-          {/* DESKTOP ACTIONS */}
-          <div className="navbar-actions">
-            {!loading && !user && (
-              <>
-                <Link to="/login" className="navbar-login">
-                  Login
+                {/* LOGO */}
+                <Link to="/" className="navbar-brand" onClick={closeMobileMenu}>
+                    <img src={logo} alt="PulsePilot" />
+                    <span>PulsePilot</span>
                 </Link>
 
-                <Link to="/register" className="navbar-register">
-                  Get Started
-                </Link>
-              </>
-            )}
+                {/* DESKTOP NAVIGATION */}
+                <div className="navbar-links">
+                    <Link to="/">Home</Link>
 
-            {!loading && user && (
-              <div className="navbar-user">
-                <button
-                  className="user-button"
-                  onClick={() => setUserMenuOpen(!userMenuOpen)}
-                >
-                  <img
-                    className="user-avatar"
-                    src={defaultProfile}
-                    alt="Profile"
-                  />
+                    {isHospitalAdmin ? (
+                        <>
+                            <Link to="/hospital/doctors">
+                                Manage Doctors
+                            </Link>
 
-                  <span className="user-name">{user.fullName}</span>
+                            <Link to="/hospital/appointments">
+                                Appointments
+                            </Link>
 
-                  <span className="user-arrow">{userMenuOpen ? "▲" : "▼"}</span>
-                </button>
+                            <Link to="/hospital/bookings">
+                                Bookings
+                            </Link>
 
-                {userMenuOpen && (
-                  <div className="user-menu">
-                    <Link to="/profile" onClick={() => setUserMenuOpen(false)}>
-                      Profile
-                    </Link>
+                            <Link to="/hospital/analytics">
+                                Analytics
+                            </Link>
+                        </>
+                    ) : (
+                        <>
+                            <Link to="/doctors">
+                                Find Doctors
+                            </Link>
 
-                    <Link
-                      to="/my-appointments"
-                      onClick={() => setUserMenuOpen(false)}
+                            {user && (
+                                <Link to="/my-appointments">
+                                    My Appointments
+                                </Link>
+                            )}
+
+                            {user && (
+                                <Link to="/bookings">
+                                    My Bookings
+                                </Link>
+                            )}
+                        </>
+                    )}
+                </div>
+
+                {/* DESKTOP ACTIONS */}
+                <div className="navbar-actions">
+
+                    {!loading && !user && (
+                        <>
+                            <Link to="/login" className="navbar-login">
+                                Login
+                            </Link>
+
+                            <Link to="/register" className="navbar-register">
+                                Get Started
+                            </Link>
+                        </>
+                    )}
+
+                    {!loading && user && (
+                        <div className="navbar-user">
+
+                            <button
+                                className="user-button"
+                                onClick={() => setUserMenuOpen(!userMenuOpen)}
+                            >
+                                <img
+                                    className="user-avatar"
+                                    src={defaultProfile}
+                                    alt="Profile"
+                                />
+
+                                <span className="user-name">
+                                    {user.fullName}
+                                </span>
+
+                                <span className="user-arrow">
+                                    {userMenuOpen ? "▲" : "▼"}
+                                </span>
+                            </button>
+
+                            {userMenuOpen && (
+                                <div className="user-menu">
+
+                                    <Link
+                                        to="/profile"
+                                        onClick={() => setUserMenuOpen(false)}
+                                    >
+                                        Profile
+                                    </Link>
+
+                                    {isHospitalAdmin ? (
+                                        <>
+                                            <Link
+                                                to="/hospital/doctors"
+                                                onClick={() => setUserMenuOpen(false)}
+                                            >
+                                                Manage Doctors
+                                            </Link>
+
+                                            <Link
+                                                to="/hospital/doctors/create"
+                                                onClick={() => setUserMenuOpen(false)}
+                                            >
+                                                Add Doctor
+                                            </Link>
+
+                                            <Link
+                                                to="/hospital/analytics"
+                                                onClick={() => setUserMenuOpen(false)}
+                                            >
+                                                Analytics
+                                            </Link>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Link
+                                                to="/my-appointments"
+                                                onClick={() => setUserMenuOpen(false)}
+                                            >
+                                                My Appointments
+                                            </Link>
+
+                                            <Link
+                                                to="/bookings"
+                                                onClick={() => setUserMenuOpen(false)}
+                                            >
+                                                My Bookings
+                                            </Link>
+                                        </>
+                                    )}
+
+                                    <button onClick={handleLogout}>
+                                        Logout
+                                    </button>
+
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* MOBILE BUTTON */}
+                    <button
+                        className="mobile-menu-button"
+                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                        aria-label="Open menu"
                     >
-                      My Appointments
+                        {mobileMenuOpen ? "✕" : "☰"}
+                    </button>
+
+                </div>
+            </div>
+
+            {/* MOBILE MENU */}
+            {mobileMenuOpen && (
+                <div className="mobile-menu">
+
+                    <Link to="/" onClick={closeMobileMenu}>
+                        Home
                     </Link>
 
-                    <Link
-                      to="/bookings"
-                      onClick={() => setUserMenuOpen(false)}
-                    >
-                      My Bookings
-                    </Link>
+                    {isHospitalAdmin ? (
+                        <>
+                            <Link
+                                to="/hospital/doctors"
+                                onClick={closeMobileMenu}
+                            >
+                                Manage Doctors
+                            </Link>
 
-                    <button onClick={handleLogout}>Logout</button>
-                  </div>
-                )}
-              </div>
-            )} 
+                            <Link
+                                to="/hospital/doctors/create"
+                                onClick={closeMobileMenu}
+                            >
+                                Add Doctor
+                            </Link>
 
-            {/* MOBILE BUTTON — ONLY VISIBLE ON MOBILE */}
-            <button
-              className="mobile-menu-button"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Open menu"
-            >
-              {mobileMenuOpen ? "✕" : "☰"}
-            </button>
-          </div>
-        </div>
+                            <Link
+                                to="/hospital/appointments"
+                                onClick={closeMobileMenu}
+                            >
+                                Appointments
+                            </Link>
 
-        {/* MOBILE MENU */}
-        {mobileMenuOpen && (
-          <div className="mobile-menu">
-            <Link to="/" onClick={closeMobileMenu}>
-              Home
-            </Link>
+                            <Link
+                                to="/hospital/bookings"
+                                onClick={closeMobileMenu}
+                            >
+                                Bookings
+                            </Link>
 
-            <Link to="/doctors" onClick={closeMobileMenu}>
-              Find Doctors
-            </Link>
+                            <Link
+                                to="/hospital/analytics"
+                                onClick={closeMobileMenu}
+                            >
+                                Analytics
+                            </Link>
+                        </>
+                    ) : (
+                        <>
+                            <Link
+                                to="/doctors"
+                                onClick={closeMobileMenu}
+                            >
+                                Find Doctors
+                            </Link>
 
-            {user ? (
-              <>
-                <Link to="/my-appointments" onClick={closeMobileMenu}>
-                  My Appointments
-                </Link>
+                            {user && (
+                                <>
+                                    <Link
+                                        to="/my-appointments"
+                                        onClick={closeMobileMenu}
+                                    >
+                                        My Appointments
+                                    </Link>
 
-                <Link to="/bookings" onClick={closeMobileMenu}>
-                  My Bookings
-                </Link>
+                                    <Link
+                                        to="/bookings"
+                                        onClick={closeMobileMenu}
+                                    >
+                                        My Bookings
+                                    </Link>
+                                </>
+                            )}
+                        </>
+                    )}
 
-                <Link to="/profile" onClick={closeMobileMenu}>
-                  Profile
-                </Link>
+                    {user ? (
+                        <>
+                            <Link
+                                to="/profile"
+                                onClick={closeMobileMenu}
+                            >
+                                Profile
+                            </Link>
 
-                <button onClick={handleLogout}>Logout</button>
-              </>
-            ) : (
-              <>
-                <Link to="/login" onClick={closeMobileMenu}>
-                  Login
-                </Link>
+                            <button onClick={handleLogout}>
+                                Logout
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <Link
+                                to="/login"
+                                onClick={closeMobileMenu}
+                            >
+                                Login
+                            </Link>
 
-                <Link
-                  to="/register"
-                  className="mobile-register"
-                  onClick={closeMobileMenu}
-                >
-                  Get Started
-                </Link>
-              </>
+                            <Link
+                                to="/register"
+                                className="mobile-register"
+                                onClick={closeMobileMenu}
+                            >
+                                Get Started
+                            </Link>
+                        </>
+                    )}
+
+                </div>
             )}
-          </div>
-        )}
-      </nav>
+        </nav>
     );
 }
 
