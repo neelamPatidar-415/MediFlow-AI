@@ -1,216 +1,156 @@
 # PulsePilot
 
-PulsePilot is a full-stack healthcare platform designed to simplify doctor discovery, appointment booking, online payments, and hospital-side management through a scalable microservices architecture.
-
-The project combines traditional healthcare workflows with AI-powered assistance to make finding doctors and managing appointments easier for patients, while giving hospitals tools to manage doctors, bookings, appointments, and analytics.
+**PulsePilot** is a full-stack healthcare platform built with a microservices architecture. It connects patients, doctors, hospitals, payments, AI assistance, and an ML-based adverse drug reaction analysis module in one system.
 
 ## Objective
 
-The main objective of PulsePilot is to build a complete healthcare ecosystem where:
+- Make doctor discovery and appointment booking simple for patients.
+- Give hospitals tools to manage doctors, appointments, bookings and analytics.
+- Add AI assistance for doctor discovery and appointment management.
+- Add an ML-based safety analysis module for patient-reported drug reactions.
+- Build the system using scalable, independently deployable microservices.
 
-- Patients can discover doctors based on their requirements.
-- Patients can view doctor details and availability.
-- Patients can book and manage appointments.
-- Online appointment payments are handled securely through Razorpay.
-- An AI assistant helps users find doctors, compare options, and manage appointments conversationally.
-- Hospitals can create and manage their doctors.
-- Hospitals can view appointments, bookings, revenue, and operational analytics.
-- The entire backend is separated into independent microservices for scalability and maintainability.
+## What I Implemented
 
-## Key Features
-
-### Patient Side
-
-- User registration and login
-- Role-based authentication
-- Doctor discovery and search
-- Doctor profile and availability details
-- Appointment creation and rescheduling
-- Appointment cancellation
+### Patient Features
+- Registration and login with role-based authentication
+- Doctor search and doctor profiles
+- Appointment booking, rescheduling and cancellation
 - Booking management
-- Online payment through Razorpay
+- Razorpay payment integration
 - Patient profile
-- Real-time AI healthcare assistant
+- AI healthcare assistant
 
-### Hospital Side
+### Hospital Features
+- Create and manage doctors
+- Doctor CRUD operations
+- View hospital appointments and bookings
+- Hospital analytics dashboard
+- Booking, completion, cancellation and revenue statistics
 
-Hospital administrators have a separate dashboard with:
-
-- Create doctor
-- Manage doctors
-- Update doctor information
-- Delete doctors
-- Hospital appointments
-- Hospital bookings
-- Hospital analytics
-- Doctor availability information
-- Booking and revenue statistics
-
-## Microservices Architecture
-
-PulsePilot follows a microservices architecture where major responsibilities are separated into independent services.
-
-| Service | Responsibility |
-|---|---|
-| **Auth Service** | User registration, login, authentication, JWT-based authorization and user roles |
-| **Doctor Service** | Doctor creation, doctor profiles, availability, search and doctor management |
-| **Appointment Service** | Appointment creation, retrieval, rescheduling and cancellation |
-| **Booking Service** | Confirmed booking records and booking management |
-| **Payment Service** | Razorpay payment creation and payment verification |
-| **Notification Service** | Notification and email-related workflows |
-| **AI Buddy Service** | AI-powered doctor discovery, comparison and appointment assistance |
-| **Hospital Dashboard Service** | Hospital statistics, doctors, bookings and revenue analytics |
-
-## AI Assistant
-
-PulsePilot includes a conversational AI assistant built using:
+### AI Assistant
+Built a conversational AI assistant using:
 
 - Google Gemini
-- LangGraph
 - LangChain
+- LangGraph
 - Socket.IO
 
-The assistant can help users:
-
-- Find suitable doctors
+It helps patients:
+- Find doctors
 - Compare doctors
 - Create appointments
 - View appointments
-- Interact with the healthcare platform conversationally
 
-The AI service also uses custom input and output guardrails to validate user requests and AI-generated responses.
+Custom input/output guardrails were also added for safer AI interactions.
 
-## Backend Communication
+## ML-Based ADR Analysis
 
-The microservices communicate through a combination of:
+A new **Adverse Drug Reaction (ADR) analysis module** was added to PulsePilot.
 
-- REST APIs for synchronous operations
-- RabbitMQ for asynchronous workflows
-- Redis for token/session-related storage
-- MongoDB for persistent data storage
+### Flow
 
-RabbitMQ is used to decouple services and handle asynchronous events such as booking, payment, and notification workflows.
+```text
+Patient Report
+      ↓
+TF-IDF
+      ↓
+Logistic Regression
+      ↓
+ADR / Non-ADR
+      ↓
+Confidence Score
+```
 
-## Hospital Analytics
+### Dataset
+- **ADE Corpus V2**
+- Hugging Face: `SetFit/ade_corpus_v2_classification`
+- Used for Adverse Drug Event classification
+- Approximately 17.6k training and 5.9k test samples
 
-The hospital dashboard provides operational insights such as:
+### ML Stack
+- Scikit-learn — TF-IDF + Logistic Regression
+- Joblib — model saving/loading
+- FastAPI — ML API
+- Uvicorn — ML service
 
-- Total doctors
-- Total bookings
-- Today's bookings
-- Completed bookings
-- Cancelled bookings
-- Total revenue
-- Recent bookings
-- Hospital doctors
+The purpose is **not to diagnose patients**. It helps hospitals identify patient reports that may contain potential ADR patterns and may require clinical review.
 
-The frontend analytics dashboard visualizes this information using **Recharts**.
+```text
+Patient → Reports symptoms
+Hospital → Gets structured report + ML analysis
+Doctor → Makes the actual medical decision
+```
 
-## Frontend
+## Microservices
 
-The frontend is built with:
+| Service | Purpose |
+|---|---|
+| **Auth** | Authentication, JWT and user roles |
+| **Doctor** | Doctor profiles, search and management |
+| **Appointment** | Appointment lifecycle |
+| **Booking** | Confirmed booking management |
+| **Payment** | Razorpay payment processing |
+| **Notification** | Notifications and email workflows |
+| **AI Buddy** | AI-powered healthcare assistance |
+| **Hospital Dashboard** | Hospital analytics and management data |
+| **ML / ADR Service** | ADR classification from patient reports |
 
-- React
-- Vite
-- React Router
-- Recharts
-- Socket.IO Client
-- CSS
+## Tech Stack
 
-The application provides separate experiences for patients and hospital administrators using role-aware navigation and routes.
+**Frontend:** React, Vite, React Router, Recharts, Socket.IO Client
 
-## Technology Stack
+**Backend:** Node.js, Express.js, MongoDB, Mongoose, REST APIs, Socket.IO
 
-### Frontend
-- React
-- Vite
-- React Router
-- Recharts
-- Socket.IO Client
+**Messaging & Storage:** RabbitMQ, Redis, MongoDB
 
-### Backend
-- Node.js
-- Express.js
-- MongoDB
-- Mongoose
-- REST APIs
-- Socket.IO
-- RabbitMQ
-- Redis
+**AI:** Google Gemini, LangChain, LangGraph, AI Guardrails
 
-### AI
-- Google Gemini
-- LangChain
-- LangGraph
-- Vector-based AI components
-- AI Guardrails
+**ML:** Python, Scikit-learn, TF-IDF, Logistic Regression, Joblib, FastAPI, Uvicorn
 
-### Payments
-- Razorpay
+**Payments:** Razorpay
 
-### DevOps & Cloud
-- Docker
-- AWS ECR
-- AWS ECS
-- AWS
-- GitHub Actions
+**DevOps:** Docker, GitHub Actions, AWS ECR, AWS ECS
 
 ## Architecture
 
 ```text
-                         ┌─────────────────────┐
-                         │   React Frontend    │
-                         │      Vite           │
-                         └──────────┬──────────┘
-                                    │
-                 ┌──────────────────┼──────────────────┐
-                 │                  │                  │
-                 ▼                  ▼                  ▼
-           Auth Service       Doctor Service      AI Buddy
-                 │                  │                  │
-                 ▼                  ▼                  ▼
-        Appointment Service   Booking Service      Gemini
-                 │                  │
-                 └──────────┬───────┘
-                            ▼
-                     Payment Service
-                            │
-                         Razorpay
+                    React + Vite
+                         |
+        ┌────────────────┼────────────────┐
+        ↓                ↓                ↓
+   Auth Service     Doctor Service     AI Buddy
+        |                |                |
+        ↓                ↓             Gemini
+ Appointment ───────→ Booking
+                         |
+                      Payment
+                         |
+                      Razorpay
 
-          RabbitMQ ──► Async Service Communication
-          Redis    ──► Token / Fast Data Storage
-          MongoDB  ──► Persistent Data Storage
+       RabbitMQ → Async communication
+       Redis    → Fast data / token storage
+       MongoDB  → Persistent data
 
-                    Hospital Dashboard
-                            │
-          ┌─────────────────┼─────────────────┐
-          ▼                 ▼                 ▼
-       Doctors          Bookings          Analytics
+                  Hospital Dashboard
+                         |
+                    Analytics
+
+              Patient Report
+                    ↓
+              ML / ADR Service
+                    ↓
+           ADR / Non-ADR + Confidence
 ```
-
-## Security & Reliability
-
-- JWT-based authentication
-- HTTP-only cookie based authentication flow
-- Role-based authorization
-- Service-level authentication middleware
-- Input validation
-- AI input/output guardrails
-- Asynchronous communication using RabbitMQ
-- Redis-based token storage
-- Dockerized services
 
 ## Deployment
 
-The project is containerized using Docker and structured for cloud deployment on AWS using **Amazon ECR** for container images and **Amazon ECS** for running the backend services.
+The services are containerized using **Docker** and prepared for deployment on **AWS using ECR and ECS**.
 
-The architecture is designed so individual microservices can be deployed and managed independently.
+## Final Goal
 
-## Project Goal
+PulsePilot combines:
 
-PulsePilot was built to demonstrate how a real-world healthcare application can combine:
+**Healthcare + Microservices + AI + ML + Payments + Real-time Communication + Cloud Deployment**
 
-**Microservices + REST APIs + Event-driven communication + AI + Payments + Real-time communication + Cloud deployment**
-
-into one complete full-stack system.
-
+into one complete healthcare platform.
