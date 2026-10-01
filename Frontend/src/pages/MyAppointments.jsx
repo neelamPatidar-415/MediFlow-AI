@@ -159,8 +159,8 @@ function MyAppointments() {
 
                             <div className="booking-doctor">
                                 <h2>
-                                    {/* <h2>{appointment.doctor.name}</h2> */}
-                                    Doctor
+                                    <h2>{appointment.doctorName}</h2>
+                                    {/* Doctor */}
                                 </h2>
 
                                 <p>

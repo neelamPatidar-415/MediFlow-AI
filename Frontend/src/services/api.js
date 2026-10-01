@@ -171,7 +171,7 @@ export async function createAppointment(data) {
 
 
 export async function getMyAppointments() {
-    console.log("➡️ Calling GET /api/appointments/my");
+    // console.log("➡️ Calling GET /api/appointments/my");
 
     const response = await fetch(
         "http://localhost:3002/api/appointments/my",
@@ -181,11 +181,11 @@ export async function getMyAppointments() {
         }
     );
 
-    console.log("⬅️ Appointment response status:", response.status);
+    // console.log("⬅️ Appointment response status:", response.status);
 
     const text = await response.text();
 
-    console.log("⬅️ Appointment raw response:", text);
+    // console.log("⬅️ Appointment raw response:", text);
 
     let result;
 

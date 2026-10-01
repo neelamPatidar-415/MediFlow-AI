@@ -3,9 +3,18 @@ admin login
     "email": "apollo@gmail.com",
     "password": "Password@123"
 } 
+UCare hospital
+{
+    email: moreraju@gmail.com
+    password: moreraju
+}
 
 user login 
 {
     "email": "neelam@gmail.com",
     "password": "Password@123"
+}
+{
+    "email": "johndoe@gmail.com",
+    "password": "johndoe"
 }

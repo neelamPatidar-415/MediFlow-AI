@@ -79,34 +79,55 @@ async function updateAppointment(req, res) {
     } catch (err) {
 
         console.error(err);
-
+        
         return res.status(500).json({
             error: "Internal Server Error",
         });
-
+        
     }
 }
 
 async function getMyAppointments(req, res) {
-
     try {
-
         const appointments = await appointmentModel.find({
             patient: req.user.id,
         });
 
+        const appointmentsWithDoctor = await Promise.all(
+            appointments.map(async (appointment) => {
+                try {
+                    const response = await axios.get(
+                        `http://localhost:3001/api/doctors/${appointment.doctor}`
+                    );
+
+                    return {
+                        ...appointment.toObject(),
+                        doctorName: response.data.data.name,
+                    };
+                } catch (err) {
+                    console.error(
+                        `Failed to fetch doctor ${appointment.doctor}:`,
+                        err.message
+                    );
+
+                    return {
+                        ...appointment.toObject(),
+                        doctorName: "Unknown Doctor",
+                    };
+                }
+            })
+        );
+
         return res.status(200).json({
-            data: appointments,
+            data: appointmentsWithDoctor,
         });
 
     } catch (err) {
-
         console.error(err);
 
         return res.status(500).json({
             error: "Internal Server Error",
         });
-
     }
 }
 
